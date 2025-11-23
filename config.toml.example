@@ -1,0 +1,25 @@
+# Example configuration for Scow
+
+# Define destinations for file transfers
+# Local paths can use ~ for home directory
+# Remote paths use SSH syntax: user@host:/path
+
+[[destinations]]
+name = "Home"
+path = "~"
+
+[[destinations]]
+name = "Downloads"
+path = "~/Downloads"
+
+[[destinations]]
+name = "External Backup"
+path = "/mnt/backup"
+
+[[destinations]]
+name = "Production Server"
+path = "user@prod.example.com:/data/archive"
+
+[[destinations]]
+name = "Backup Server"
+path = "ssh://backup@backup.example.com/backup"
