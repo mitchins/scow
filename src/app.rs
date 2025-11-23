@@ -33,11 +33,13 @@ impl Staging {
 
     pub fn toggle_delete(&mut self, path: PathBuf, size: u64) {
         if self.ops.contains_key(&path) {
+            // Un-staging a delete: we're no longer freeing this space
             self.ops.remove(&path);
-            self.net_size_change += size as i64;
+            self.net_size_change += size as i64;  // Less space will be freed
         } else {
+            // Staging a delete: we will free this space
             self.ops.insert(path, Action::Delete);
-            self.net_size_change -= size as i64;
+            self.net_size_change -= size as i64;  // More space will be freed
         }
     }
 

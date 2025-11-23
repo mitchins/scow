@@ -44,6 +44,8 @@ impl Worker {
             if let Some(filename) = source.file_name() {
                 let target = dest.join(filename);
                 fs::rename(source, target)?;
+            } else {
+                anyhow::bail!("Source path has no filename component");
             }
         } else {
             // Move to specific path
@@ -53,8 +55,13 @@ impl Worker {
     }
 
     fn execute_remote_move(source: &Path, dest: &str) -> Result<()> {
-        // Parse destination (format: user@host:path or ssh://user@host/path)
+        // Validate destination format
         let dest_clean = dest.strip_prefix("ssh://").unwrap_or(dest);
+        
+        // Basic validation to prevent command injection
+        if dest_clean.contains(';') || dest_clean.contains('|') || dest_clean.contains('&') {
+            anyhow::bail!("Invalid destination path: potentially unsafe characters");
+        }
         
         let output = Command::new("rsync")
             .arg("-avz")
